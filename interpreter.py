@@ -17,3 +17,4 @@ There are eight commands:
 
 '''
 
+cell = [None for x in range(0, 1000)] # Create 1000 empty cells
