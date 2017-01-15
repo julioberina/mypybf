@@ -16,7 +16,18 @@ There are eight commands:
 [ and ] form a while loop. Obviously, they must be balanced.
 
 '''
+from collections import defaultdict
 
 cell = [0 for x in range(0, 10000)] # Create 10000 empty cells
 position = 0
+bfstack = [] # stack used for brainfuck while loops only
 
+env = {
+    '+': lambda: cell[position] += 1,
+    '-': lambda: cell[position] -= 1,
+    '.': lambda: print(chr(cell[position])),
+    '>': lambda: position = 0 if position == 9999 else position + 1,
+    '<': lambda: position = 9999 if position == 0 else position - 1,
+    ',': lambda: print(input()),
+    '[': lambda p: bfstack.append(p)
+    }
