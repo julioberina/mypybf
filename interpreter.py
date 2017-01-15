@@ -17,4 +17,6 @@ There are eight commands:
 
 '''
 
-cell = [None for x in range(0, 1000)] # Create 1000 empty cells
+cell = [0 for x in range(0, 10000)] # Create 10000 empty cells
+position = 0
+
