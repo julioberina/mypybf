@@ -17,10 +17,14 @@ There are eight commands:
 
 '''
 from collections import defaultdict
+import sys
 
 cell = [0 for x in range(0, 10000)] # Create 10000 empty cells
 position = 0
 bfstack = [] # stack used for brainfuck while loops only
+ifile = open(sys.argv[1])
+code = ifile.read()
+ifile.close()
 
 env = {
     '+': lambda: cell[position] += 1,
@@ -29,5 +33,37 @@ env = {
     '>': lambda: position = 0 if position == 9999 else position + 1,
     '<': lambda: position = 9999 if position == 0 else position - 1,
     ',': lambda: print(input()),
-    '[': lambda p: bfstack.append(p)
+    '[': lambda p: bfstack.append(p),
+    ']': lambda: bfstack.pop()
     }
+env = defaultdict(lambda: None, env)
+
+def bfeval(index):    
+    if code[index] == code[-1]:
+        if code[index] == '[':
+            env[code[index]](index)
+        else:
+            env[code[index]]()
+            
+    else:
+        if code[index] == '[':
+            if cell[position] == 0:
+                while code[index] != ']':
+                    index += 1
+                bfeval(index)
+            else:
+                env[code[index]](index)
+                bfeval(index+1)
+                
+        elif code[index] == ']':
+            if cell[position] == 0:
+                env[code[index]]()
+                bfeval(index+1)
+            else:
+                bfeval(bfstack.pop())
+                
+        else:
+            env[code[index]]()
+            bfeval(index+1)
+
+bfeval(0)
