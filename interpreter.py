@@ -66,8 +66,8 @@ def bfeval(index):
     global cell
     global position
     global bfstack
-    
-    if index < stop:
+
+    while index < stop:
         if code[index] == '+':
             inc_cell()
         elif code[index] == '-':
@@ -92,6 +92,6 @@ def bfeval(index):
             else:
                 bfstack.pop()
 
-        bfeval(index+1)
+        index += 1
 
 bfeval(0)
