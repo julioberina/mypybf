@@ -25,6 +25,7 @@ bfstack = [] # stack used for brainfuck while loops only
 ifile = open(sys.argv[1])
 code = ifile.read()
 code = code.replace("\n", "")
+stop = len(code)
 ifile.close()
 
 # functions for brainfuck operations
@@ -52,20 +53,13 @@ def move_cell_left():
         position = 9999
     else:
         position -= 1
+
+def print_cell_chr():
+    global cell
+    global position
+    print(chr(cell[position]), end="")
     
 # end functions
-
-env = {
-    '+': lambda: inc_cell(),
-    '-': lambda: dec_cell(),
-    '.': lambda: print(chr(cell[position])),
-    '>': lambda: move_cell_right(),
-    '<': lambda: move_cell_left(),
-    ',': lambda: print(input()),
-    '[': lambda p: bfstack.append(p),
-    ']': lambda: bfstack.pop()
-    }
-env = defaultdict(lambda: None, env)
 
 def bfeval(index):
     global code
@@ -73,33 +67,31 @@ def bfeval(index):
     global position
     global bfstack
     
-    if code[index] == code[-1]:
-        if code[index] == '[':
-            env[code[index]](index)
-        else:
-            env[code[index]]()
-            
-    else:
-        if code[index] == '[':
+    if index < stop:
+        if code[index] == '+':
+            inc_cell()
+        elif code[index] == '-':
+            dec_cell()
+        elif code[index] == '.':
+            print_cell_chr()
+        elif code[index] == '>':
+            move_cell_right()
+        elif code[index] == '<':
+            move_cell_left()
+        elif code[index] == ',':
+            print(input())
+        elif code[index] == '[':
             if cell[position] == 0:
                 while code[index] != ']':
                     index += 1
-                bfeval(index)
             else:
-                env[code[index]](index)
-                bfeval(index+1)
-                
+                bfstack.append(index)
         elif code[index] == ']':
-            if cell[position] == 0:
-                env[code[index]]()
-                bfeval(index+1)
+            if cell[position] != 0:
+                index = bfstack[-1]
             else:
-                bfeval(bfstack[-1]+1)
-                
-        else:
-            if env[code[index]] != None:
-                env[code[index]]()
-                
-            bfeval(index+1)
+                bfstack.pop()
+
+        bfeval(index+1)
 
 bfeval(0)
