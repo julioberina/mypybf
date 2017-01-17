@@ -30,7 +30,7 @@ data.each_char do |char|
   (dec / 10).times { ofile.print "+" }
   ofile.print ">-]<"
   (dec % 10).times { ofile.print "+" }
-  ofile.puts ".>"
+  ofile.print ".>"
 end
 
 ofile.close
