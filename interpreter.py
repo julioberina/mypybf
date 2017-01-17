@@ -24,21 +24,55 @@ position = 0
 bfstack = [] # stack used for brainfuck while loops only
 ifile = open(sys.argv[1])
 code = ifile.read()
+code = code.replace("\n", "")
 ifile.close()
 
+# functions for brainfuck operations
+
+def inc_cell():
+    global cell
+    global position
+    cell[position] += 1
+
+def dec_cell():
+    global cell
+    global position
+    cell[position] -= 1
+
+def move_cell_right():
+    global position
+    if position == 9999:
+        position = 0
+    else:
+        position += 1
+
+def move_cell_left():
+    global position
+    if position == 0:
+        position = 9999
+    else:
+        position -= 1
+    
+# end functions
+
 env = {
-    '+': lambda: cell[position] += 1,
-    '-': lambda: cell[position] -= 1,
+    '+': lambda: inc_cell(),
+    '-': lambda: dec_cell(),
     '.': lambda: print(chr(cell[position])),
-    '>': lambda: position = 0 if position == 9999 else position + 1,
-    '<': lambda: position = 9999 if position == 0 else position - 1,
+    '>': lambda: move_cell_right(),
+    '<': lambda: move_cell_left(),
     ',': lambda: print(input()),
     '[': lambda p: bfstack.append(p),
     ']': lambda: bfstack.pop()
     }
 env = defaultdict(lambda: None, env)
 
-def bfeval(index):    
+def bfeval(index):
+    global code
+    global cell
+    global position
+    global bfstack
+    
     if code[index] == code[-1]:
         if code[index] == '[':
             env[code[index]](index)
@@ -63,7 +97,9 @@ def bfeval(index):
                 bfeval(bfstack.pop())
                 
         else:
-            env[code[index]]()
+            if env[code[index]] != None:
+                env[code[index]]()
+                
             bfeval(index+1)
 
 bfeval(0)
