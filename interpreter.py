@@ -21,7 +21,7 @@ import sys
 cell = [0 for x in range(0, 10000)] # Create 10000 empty cells
 position = 0
 bfstack = [] # stack used for brainfuck while loops only
-ifile = open(sys.argv[1])
+ifile = open(sys.argv[1]) # open up the .bf file supplied in command-line arguments
 code = ifile.read()
 code = code.replace("\n", "")
 stop = len(code)
@@ -29,16 +29,19 @@ ifile.close()
 
 # functions for brainfuck operations
 
+# increments value of cell at current position
 def inc_cell():
     global cell
     global position
     cell[position] += 1
 
+# decrements value of cell at current position
 def dec_cell():
     global cell
     global position
     cell[position] -= 1
 
+# move position one over to the right
 def move_cell_right():
     global position
     if position == 9999:
@@ -46,6 +49,7 @@ def move_cell_right():
     else:
         position += 1
 
+# move position one over to the left
 def move_cell_left():
     global position
     if position == 0:
@@ -53,6 +57,7 @@ def move_cell_left():
     else:
         position -= 1
 
+# Print ASCII value of decimal number of cell at current position
 def print_cell_chr():
     global cell
     global position
@@ -61,12 +66,16 @@ def print_cell_chr():
 # end functions
 
 def bfeval(index):
+    # reference the variables outside the function for use in function
     global code
     global cell
     global position
     global bfstack
 
+    # while loop traverses the entire string in code which contains brainfuck code
     while index < stop:
+
+        # evaluate brainfuck code based on which of the 8 commands it sees
         if code[index] == '+':
             inc_cell()
         elif code[index] == '-':
@@ -79,6 +88,16 @@ def bfeval(index):
             move_cell_left()
         elif code[index] == ',':
             print(input())
+
+        # The '[' and ']' indicate a loop in brainfuck
+        # When if first encounters '[', it checks whether the current cell
+        # is 0.
+        # If it is, go to the next ']' and continue evaluating the
+        # rest of the code.
+        # Else, add the current index into bfstack which keeps track of
+        # the spots in the string 'code' containing all the brainfuck
+        # code where the start and end of the brainfuck loop is.
+            
         elif code[index] == '[':
             if cell[position] == 0:
                 while code[index] != ']':
@@ -93,4 +112,5 @@ def bfeval(index):
 
         index += 1
 
+# start evaluating the brainfuck code from the left of the string
 bfeval(0)
