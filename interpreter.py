@@ -16,7 +16,6 @@ There are eight commands:
 [ and ] form a while loop. Obviously, they must be balanced.
 
 '''
-from collections import defaultdict
 import sys
 
 cell = [0 for x in range(0, 10000)] # Create 10000 empty cells
